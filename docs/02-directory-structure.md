@@ -20,7 +20,7 @@
 ### repos (`0755`, setgid)
 
 - **完整讀寫** — 這是唯一設計給 WinSCP、VSCode Remote、Codex Remote 直接操作的路徑。
-- `setgid` 確保新建檔案繼承群組，多個 remote session 不會產生權限衝突。
+- `setgid` 確保新建檔案繼承群組，讓同群組的 remote session 保持一致的 group 歸屬；若要多個不同帳號共同協作，仍需搭配 `0775` + umask/ACL 才能真正避免寫入衝突。
 - 所有 git clone / pull / push 操作都在這裡進行。
 
 ### runtime (`0750`)
@@ -38,7 +38,7 @@
 ### logs (`0755`)
 
 - 存放應用程式 log、service output、部署紀錄。
-- 可透過 WinSCP / VSCode Remote **唯讀瀏覽**，方便 debug。
+- 可透過 WinSCP / VSCode Remote 瀏覽，方便 debug；建議只瀏覽、避免直接修改。
 
 ---
 
@@ -46,9 +46,9 @@
 
 | Tool | repos | runtime | backups | logs |
 |---|---|---|---|---|
-| **WinSCP** | read/write | view only | download only | read only |
-| **VSCode Remote** | read/write | view only | download only | read only |
-| **Codex Remote** | read/write | view only | — | read only |
+| **WinSCP** | read/write | 不建議掛載編輯 | 建議僅下載 | 建議只瀏覽 |
+| **VSCode Remote** | read/write | 不建議掛載編輯 | 建議僅下載 | 建議只瀏覽 |
+| **Codex Remote** | read/write | 不建議掛載編輯 | — | 建議只瀏覽 |
 | **SSH terminal** | full | full | full | full |
 
 > **原則：** 只有 `repos` 是設計給視覺化編輯器「直接修改檔案」的安全區。
@@ -80,4 +80,4 @@ sudo VPS_USER=myuser ./scripts/init-vps-dirs.sh
 
 ## 相關文件
 
-- [01 — Connection Config](./01-connection-config.md) (WHO-216)
+- 01 — Connection Config (WHO-216)（文件尚未加入 repo）

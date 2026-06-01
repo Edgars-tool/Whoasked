@@ -25,5 +25,5 @@ See [`docs/02-directory-structure.md`](docs/02-directory-structure.md) for the f
 
 | Doc | Description |
 |---|---|
-| [`01-connection-config.md`](docs/01-connection-config.md) | VPS connection baseline (WHO-216) |
+| `01-connection-config.md` | VPS connection baseline (WHO-216)（文件尚未加入 repo）|
 | [`02-directory-structure.md`](docs/02-directory-structure.md) | Safe-zone dirs & permissions (WHO-217) |
