@@ -30,6 +30,14 @@ VPS_GROUP="$(id -gn "$VPS_USER")"
 # ---------- create directories ----------
 green "Creating $BASE directory tree ..."
 
+# Ensure the base directory exists and is at least world-executable so that
+# SSH users can always traverse into its subdirectories, even on a re-run
+# where $BASE already exists with overly-restrictive permissions.
+mkdir -p "$BASE"
+chown "$VPS_USER:$VPS_GROUP" "$BASE"
+chmod 0755 "$BASE"
+info "$BASE  owner=$VPS_USER  mode=0755 (ensured)"
+
 #  repos     — git clones, editable via WinSCP / VSCode / Codex
 #  runtime   — Docker volumes, databases, state files (hands-off)
 #  backups   — scheduled / manual backups
@@ -68,8 +76,8 @@ ls -la "$BASE"
 echo ""
 green "Visual-edit safe paths:"
 info "$BASE/repos   (WinSCP / VSCode Remote / Codex Remote OK)"
-info "$BASE/logs    (read-only browsing OK)"
+info "$BASE/logs    (OK to browse — avoid direct edits)"
 echo ""
 green "Restricted paths (do NOT mount as primary edit target):"
-info "$BASE/runtime (Docker state / databases — view only)"
-info "$BASE/backups (backup storage — view only)"
+info "$BASE/runtime (Docker state / databases — avoid mounting as edit target)"
+info "$BASE/backups (backup storage — avoid direct editing)"
