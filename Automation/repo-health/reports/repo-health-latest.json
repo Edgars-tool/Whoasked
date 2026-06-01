@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-04-27 00:02:17 +08:00",
+  "script": "C:\\Users\\EdgarsTool\\Automation\\repo-health\\audit-repos.ps1",
+  "config": "C:\\Users\\EdgarsTool\\Automation\\repo-health\\repos.config.json",
+  "mode": "read-only",
+  "prohibitedOperations": [
+    "pull",
+    "push",
+    "commit",
+    "clean",
+    "reset",
+    "merge",
+    "checkout",
+    "fetch"
+  ],
+  "remoteCheckMode": "ls-remote-read-only",
+  "scanRoots": [
+    {
+      "path": "C:\\Users\\EdgarsTool\\Projects",
+      "defaultCategory": "product",
+      "recursive": true
+    },
+    {
+      "path": "C:\\Users\\EdgarsTool\\.openclaw",
+      "defaultCategory": "workspace",
+      "recursive": true
+    }
+  ],
+  "missingRoots": [],
+  "summary": {
+    "total": 20,
+    "critical": 1,
+    "warning": 16,
+    "info": 3,
+    "ok": 0
+  },
+  "repositories": [
+    {
+      "path": "C:\\Users\\EdgarsTool\\Projects\\haodai-linebot",
+      "name": "haodai-linebot",
+      "category": "product",
+      "severity": "critical",
+      "branch": "main",
+      "upstream": "origin/main",
+      "dirty": false,
+      "changedPathCount": 0,
+      "ahead": 0,
+      "behind": 22,
+      "remoteCheck": {
+        "status": "ok",
+        "detail": "Read-only ls-remote succeeded for origin."
+      },
+      "exemptions": [],
+      "issues": [
+        {
+          "code": "behind",
+          "severity": "critical",
+          "message": "Local branch is behind by 22 commit(s)."
+        }
+      ],
+      "notes": "WHO-122 baseline critical repo; previous verified state was behind by 22 commits.",
+      "fetchStatus": {
+        "status": "not-performed",
+        "detail": "Read-only policy forbids git fetch; ahead/behind reflects existing local remote-tracking refs."
+      }
+    }
+  ],
+  "baselineEvidence": {
+    "source": "Linear WHO-122 issue description",
+    "latestVerifiedRun": "2026-04-27 00:02:17 +08:00",
+    "counts": {
+      "repo": 20,
+      "critical": 1,
+      "warning": 16,
+      "info": 3
+    },
+    "note": "This checked-in report preserves the issue evidence. Running audit-repos.ps1 on Edgar's Windows machine regenerates full per-repo details."
+  },
+  "fetchStatusMode": "not-performed-read-only"
+}
