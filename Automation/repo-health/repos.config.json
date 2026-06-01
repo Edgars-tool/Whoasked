@@ -1,0 +1,74 @@
+{
+  "$schema": "https://example.local/repo-health.schema.json",
+  "version": 1,
+  "scanRoots": [
+    {
+      "path": "C:\\Users\\EdgarsTool\\Projects",
+      "defaultCategory": "product",
+      "recursive": true
+    },
+    {
+      "path": "C:\\Users\\EdgarsTool\\.openclaw",
+      "defaultCategory": "workspace",
+      "recursive": true
+    }
+  ],
+  "reports": {
+    "directory": "C:\\Users\\EdgarsTool\\Automation\\repo-health\\reports",
+    "jsonFile": "repo-health-latest.json",
+    "markdownFile": "repo-health-latest.md"
+  },
+  "remoteCheck": {
+    "enabled": true,
+    "timeoutSeconds": 15,
+    "mode": "ls-remote-read-only"
+  },
+  "policies": {
+    "product": {
+      "description": "Primary product repositories. Dirty worktrees, missing upstreams, and large behind counts need attention.",
+      "dirtySeverity": "warning",
+      "missingUpstreamSeverity": "warning",
+      "aheadSeverity": "warning",
+      "behindWarningThreshold": 1,
+      "behindCriticalThreshold": 10
+    },
+    "workspace": {
+      "description": "Workspace or generated family repositories. Noisy status is expected; policy keeps signal lower unless explicitly overridden.",
+      "dirtySeverity": "info",
+      "missingUpstreamSeverity": "info",
+      "aheadSeverity": "info",
+      "behindWarningThreshold": 5,
+      "behindCriticalThreshold": 25
+    },
+    "local-only": {
+      "description": "Intentional local-only repositories. Missing upstream is exempted unless another rule overrides it.",
+      "dirtySeverity": "info",
+      "missingUpstreamSeverity": "info",
+      "aheadSeverity": "info",
+      "behindWarningThreshold": 9999,
+      "behindCriticalThreshold": 9999,
+      "exemptions": ["missing-upstream", "remote-check"]
+    },
+    "mirror": {
+      "description": "Mirror or vendor repositories. Dirty worktrees are unusual; behind status is informational unless severe.",
+      "dirtySeverity": "warning",
+      "missingUpstreamSeverity": "warning",
+      "aheadSeverity": "warning",
+      "behindWarningThreshold": 10,
+      "behindCriticalThreshold": 50
+    }
+  },
+  "repoOverrides": [
+    {
+      "path": "C:\\Users\\EdgarsTool\\Projects\\haodai-linebot",
+      "category": "product",
+      "notes": "WHO-122 baseline critical repo; previous verified state was behind by 22 commits."
+    },
+    {
+      "pathPattern": "C:\\Users\\EdgarsTool\\.openclaw\\*",
+      "category": "workspace",
+      "exemptions": ["dirty-tree", "missing-upstream"],
+      "notes": ".openclaw family repos are intentionally noisy and should be interpreted with workspace policy."
+    }
+  ]
+}
