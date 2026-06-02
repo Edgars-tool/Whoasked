@@ -29,4 +29,4 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 1. 先 `Copy-Item` 建立 checkpoint，再處理 active log。
 2. active log 以 truncate 清空（保留同一路徑），降低對 gateway 寫入流程的干擾。
-3. 只在 `logs\archive\cache-trace\` 下做 archive 清理，不碰 secrets/runtime/Desktop 路徑。
+3. 依 WHO-97 guardrails，archive 清理只在 `logs\archive\cache-trace\` 下進行，不跨到其他工作區路徑（例如 secrets、runtime cache、Desktop）。

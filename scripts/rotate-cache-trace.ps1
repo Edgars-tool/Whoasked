@@ -1,5 +1,5 @@
 param(
-    [string]$TraceLogPath = (Join-Path (Get-Location) "logs\\cache-trace.jsonl"),
+    [string]$TraceLogPath = (Join-Path (Get-Location) "logs\cache-trace.jsonl"),
     [ValidateRange(1, 4096)]
     [int]$RotateAtMB = 256,
     [ValidateRange(1, 365)]
@@ -57,7 +57,7 @@ try {
 
 $writeProbe = [System.IO.File]::Open($tracePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Write, [System.IO.FileShare]::ReadWrite)
 try {
-    # 只做可寫入探測，不新增任何內容。
+    # 只做可寫入探測，不新增任何內容。這可快速確認檔案在 truncate 後仍可被其他程序寫入。
 } finally {
     $writeProbe.Dispose()
 }
