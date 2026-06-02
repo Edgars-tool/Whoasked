@@ -45,6 +45,8 @@ if (-not $ForceRotate -and $traceItem.Length -lt $thresholdBytes) {
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $checkpointPath = Join-Path $archiveDir ("cache-trace.{0}.checkpoint.jsonl" -f $timestamp)
 
+Write-Warning "若 gateway 正在高頻寫入，checkpoint 與 truncate 間可能有極短時間差。建議於低流量或維護時段執行。"
+
 Copy-Item -LiteralPath $tracePath -Destination $checkpointPath -Force
 Write-Host "[OK] 已建立 checkpoint：$checkpointPath" -ForegroundColor Green
 
@@ -56,11 +58,7 @@ try {
 }
 
 $writeProbe = [System.IO.File]::Open($tracePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Write, [System.IO.FileShare]::ReadWrite)
-try {
-    # 只做可寫入探測，不新增任何內容。這可快速確認檔案在 truncate 後仍可被其他程序寫入。
-} finally {
-    $writeProbe.Dispose()
-}
+$writeProbe.Dispose()
 
 Write-Host "[OK] 已清空 active trace，gateway 可繼續寫入同一路徑。" -ForegroundColor Green
 
