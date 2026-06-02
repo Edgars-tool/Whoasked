@@ -11,6 +11,18 @@ Mode: read-only audit; no pull, push, commit, clean, reset, merge, checkout, or 
 - Info: 3
 - OK: 0
 
+## Policy Decisions
+
+| Target | Category | Decision | Issue | Rationale |
+| --- | --- | --- | --- | --- |
+| `Projects\rebuild` | product | track upstream origin/codex/agent-git-pr-rule | WHO-124 | Active dev branch; upstream backfilled so the audit no longer flags missing-upstream. |
+| `workspace-lobster` | local-only | local-only; no remote tracking required | WHO-124 | Final decision: not promoted to a remote tracking branch until Edgar approves a remote. |
+| `.openclaw\workspace\main` | local-only | local-only | WHO-124 | Intentional local-only workspace; missing-upstream is expected. |
+| `openclaw-google-workspace` | local-only | local-only until remote approved | WHO-124 | No remote until Edgar approves; treated as intentional local-only. |
+| `.openclaw\extensions\ai-agent-console` | mirror | mirror-only; canonical is Projects\ai-agent-console | WHO-124 | Duplicate clone; the canonical working copy is Projects\ai-agent-console. |
+| `duplicate clones` | mirror | canonical working copy is the only primary; mirror-tagged duplicates stay mirror-only | WHO-124 | Avoid re-judging duplicate working copies on every audit. |
+| `workspace severity thresholds` | workspace | keep warning=5, critical=25 | WHO-124 | No further tuning until a fresh Windows report shows the threshold is still too noisy. |
+
 ## Repo Table
 
 | Severity | Category | Repo | Branch | Upstream | Dirty | Ahead | Behind | Fetch | Remote | Notes |

@@ -13,7 +13,7 @@
 #>
 [CmdletBinding()]
 param(
-  [string]$ConfigPath = (Join-Path $PSScriptRoot 'repos.config.json'),
+  [string]$ConfigPath,
   [string]$ReportDirectory,
   [switch]$NoRemoteCheck
 )
@@ -21,9 +21,25 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# Resolve the script directory and default config path defensively. $PSScriptRoot
+# can be empty in some -File invocation contexts, so fall back through
+# $PSCommandPath, $MyInvocation, and the current location before joining names.
+$scriptDirectory = $PSScriptRoot
+if (-not $scriptDirectory -and $PSCommandPath) { $scriptDirectory = Split-Path -Parent $PSCommandPath }
+if (-not $scriptDirectory -and $MyInvocation.MyCommand.Path) { $scriptDirectory = Split-Path -Parent $MyInvocation.MyCommand.Path }
+if (-not $scriptDirectory) { $scriptDirectory = (Get-Location).Path }
+if (-not $ConfigPath) { $ConfigPath = Join-Path $scriptDirectory 'repos.config.json' }
+
 function ConvertTo-PlainPath {
   param([Parameter(Mandatory)][string]$Path)
-  return [System.IO.Path]::GetFullPath($Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar))
+  $trimmed = $Path.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+  # repoOverrides.pathPattern entries may contain wildcard characters, which
+  # [System.IO.Path]::GetFullPath rejects on .NET Framework. Normalize separators
+  # directly when wildcards are present so matching works across runtimes.
+  if ($trimmed.IndexOfAny([char[]]@('*', '?')) -ge 0) {
+    return ($trimmed -replace '/', '\')
+  }
+  return [System.IO.Path]::GetFullPath($trimmed)
 }
 
 function Invoke-Git {
@@ -245,6 +261,16 @@ function New-MarkdownReport {
     [void]$lines.Add("- Missing scan roots: $($Report.missingRoots.Count)")
   }
   [void]$lines.Add('')
+  if (($Report.PSObject.Properties.Name -contains 'policyDecisions') -and (@($Report.policyDecisions).Count -gt 0)) {
+    [void]$lines.Add('## Policy Decisions')
+    [void]$lines.Add('')
+    [void]$lines.Add('| Target | Category | Decision | Issue | Rationale |')
+    [void]$lines.Add('| --- | --- | --- | --- | --- |')
+    foreach ($decision in $Report.policyDecisions) {
+      [void]$lines.Add("| ``$($decision.target)`` | $($decision.category) | $($decision.decision) | $($decision.issue) | $($decision.rationale) |")
+    }
+    [void]$lines.Add('')
+  }
   [void]$lines.Add('## Repo Table')
   [void]$lines.Add('')
   [void]$lines.Add('| Severity | Category | Repo | Branch | Upstream | Dirty | Ahead | Behind | Fetch | Remote | Notes |')
@@ -263,7 +289,7 @@ function New-MarkdownReport {
   } else {
     foreach ($repo in $followUps) {
       $issueText = ($repo.issues | ForEach-Object { "$($_.code) ($($_.severity))" }) -join ', '
-      [void]$lines.Add("- [$($repo.severity)] ``$($repo.path)`` — $issueText")
+      [void]$lines.Add("- [$($repo.severity)] ``$($repo.path)`` - $issueText")
     }
   }
   if ($Report.missingRoots.Count -gt 0) {
@@ -281,7 +307,7 @@ if (-not (Test-Path -LiteralPath $ConfigPath -PathType Leaf)) {
 }
 
 $config = Get-Content -LiteralPath $ConfigPath -Raw | ConvertFrom-Json
-$reportDir = if ($ReportDirectory) { $ReportDirectory } elseif ($config.reports.directory) { [string]$config.reports.directory } else { Join-Path $PSScriptRoot 'reports' }
+$reportDir = if ($ReportDirectory) { $ReportDirectory } elseif ($config.reports.directory) { [string]$config.reports.directory } else { Join-Path $scriptDirectory 'reports' }
 New-Item -ItemType Directory -Force -Path $reportDir | Out-Null
 
 $scan = Find-GitRepositories -ScanRoots @($config.scanRoots)
@@ -318,6 +344,7 @@ $report = [pscustomobject]@{
   remoteCheckMode = if ($NoRemoteCheck) { 'disabled' } else { [string]$config.remoteCheck.mode }
   scanRoots = @($config.scanRoots)
   missingRoots = @($scan.MissingRoots)
+  policyDecisions = if ($config.PSObject.Properties.Name -contains 'policyDecisions') { @($config.policyDecisions) } else { @() }
   summary = $summary
   repositories = @($repoReports | Sort-Object severity, path)
 }
