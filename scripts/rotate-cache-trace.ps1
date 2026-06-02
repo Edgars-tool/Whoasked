@@ -26,6 +26,7 @@ function Ensure-FileExists {
 }
 
 Write-Host "=== WHO-97 cache trace rotation ===" -ForegroundColor Cyan
+Write-Warning "若 gateway 正在高頻寫入，checkpoint 與 truncate 間可能有極短時間差。建議於低流量或維護時段執行。"
 
 $tracePath = Resolve-FullPath -Path $TraceLogPath
 Ensure-FileExists -FilePath $tracePath
@@ -45,8 +46,6 @@ if (-not $ForceRotate -and $traceItem.Length -lt $thresholdBytes) {
 $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
 $checkpointPath = Join-Path $archiveDir ("cache-trace.{0}.checkpoint.jsonl" -f $timestamp)
 
-Write-Warning "若 gateway 正在高頻寫入，checkpoint 與 truncate 間可能有極短時間差。建議於低流量或維護時段執行。"
-
 Copy-Item -LiteralPath $tracePath -Destination $checkpointPath -Force
 Write-Host "[OK] 已建立 checkpoint：$checkpointPath" -ForegroundColor Green
 
@@ -57,6 +56,7 @@ try {
     $stream.Dispose()
 }
 
+# 以 Write 權限重新開啟檔案，確認 truncate 後仍可被寫入。
 $writeProbe = [System.IO.File]::Open($tracePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Write, [System.IO.FileShare]::ReadWrite)
 $writeProbe.Dispose()
 
