@@ -33,5 +33,5 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 ## 併發寫入注意
 
-- 若 gateway 正在高頻寫入，checkpoint 與 truncate 之間仍存在極短時間差，少量最新資料可能不在 checkpoint 中。
+- 若 gateway 正在高頻寫入，checkpoint（備份時間點）與 truncate（清空檔案）之間仍存在極短時間差，少量最新資料可能不在 checkpoint 中。
 - 建議在低流量時段或維護時段執行；若可控，先暫停 trace 寫入再執行會更安全。

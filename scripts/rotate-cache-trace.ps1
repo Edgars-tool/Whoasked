@@ -26,7 +26,7 @@ function Ensure-FileExists {
 }
 
 Write-Host "=== WHO-97 cache trace rotation ===" -ForegroundColor Cyan
-Write-Warning "若 gateway 正在高頻寫入，checkpoint 與 truncate 間可能有極短時間差。建議於低流量或維護時段執行。"
+Write-Warning "若 gateway 正在高頻寫入，checkpoint（備份）與 truncate（清空）之間可能有極短時間差，少數最新資料可能遺漏。建議於低流量或維護時段執行。"
 
 $tracePath = Resolve-FullPath -Path $TraceLogPath
 Ensure-FileExists -FilePath $tracePath
@@ -57,8 +57,12 @@ try {
 }
 
 # 以 Write 權限重新開啟檔案，確認 truncate 後仍可被寫入。
-$writeProbe = [System.IO.File]::Open($tracePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Write, [System.IO.FileShare]::ReadWrite)
-$writeProbe.Dispose()
+try {
+    $writeProbe = [System.IO.File]::Open($tracePath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Write, [System.IO.FileShare]::ReadWrite)
+    $writeProbe.Dispose()
+} catch {
+    throw "truncate 後無法重新開啟檔案進行寫入：$tracePath。$($_.Exception.Message)"
+}
 
 Write-Host "[OK] 已清空 active trace，gateway 可繼續寫入同一路徑。" -ForegroundColor Green
 
