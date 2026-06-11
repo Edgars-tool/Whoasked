@@ -65,10 +65,96 @@
       "notes": "WHO-122 baseline critical repo; previous verified state was behind by 22 commits."
     },
     {
+      "path": "C:\\Users\\EdgarsTool\\Projects\\rebuild",
+      "category": "product",
+      "expectedUpstream": "origin/codex/agent-git-pr-rule",
+      "notes": "WHO-124: expected upstream is origin/codex/agent-git-pr-rule. Backfilled so the audit no longer reports missing-upstream."
+    },
+    {
+      "path": "C:\\Users\\EdgarsTool\\Projects\\ai-agent-console",
+      "category": "product",
+      "role": "canonical",
+      "notes": "WHO-124: canonical working copy of ai-agent-console. The .openclaw\\extensions copy is a mirror of this."
+    },
+    {
+      "path": "C:\\Users\\EdgarsTool\\.openclaw\\extensions\\ai-agent-console",
+      "category": "mirror",
+      "role": "mirror",
+      "canonicalPath": "C:\\Users\\EdgarsTool\\Projects\\ai-agent-console",
+      "exemptions": ["dirty-tree", "missing-upstream", "remote-check"],
+      "notes": "WHO-124: mirror-only duplicate clone. Canonical working copy is C:\\Users\\EdgarsTool\\Projects\\ai-agent-console; do not treat divergence here as actionable."
+    },
+    {
+      "path": "C:\\Users\\EdgarsTool\\.openclaw\\workspace\\main",
+      "category": "local-only",
+      "notes": "WHO-124: intentional local-only workspace. Missing upstream is expected and exempted."
+    },
+    {
+      "pathPattern": "C:\\Users\\EdgarsTool\\*workspace-lobster",
+      "category": "local-only",
+      "notes": "WHO-124: final decision is local-only. Not promoted to remote tracking until a remote is approved."
+    },
+    {
+      "pathPattern": "C:\\Users\\EdgarsTool\\*google-workspace",
+      "category": "local-only",
+      "notes": "WHO-124: openclaw-google-workspace is local-only until a remote is explicitly approved."
+    },
+    {
       "pathPattern": "C:\\Users\\EdgarsTool\\.openclaw\\*",
       "category": "workspace",
       "exemptions": ["dirty-tree", "missing-upstream"],
       "notes": ".openclaw family repos are intentionally noisy and should be interpreted with workspace policy."
+    }
+  ],
+  "policyDecisions": [
+    {
+      "target": "Projects\\rebuild",
+      "category": "product",
+      "decision": "track upstream origin/codex/agent-git-pr-rule",
+      "issue": "WHO-124",
+      "rationale": "Active dev branch; upstream backfilled so the audit no longer flags missing-upstream."
+    },
+    {
+      "target": "workspace-lobster",
+      "category": "local-only",
+      "decision": "local-only; no remote tracking required",
+      "issue": "WHO-124",
+      "rationale": "Final decision: not promoted to a remote tracking branch until Edgar approves a remote."
+    },
+    {
+      "target": ".openclaw\\workspace\\main",
+      "category": "local-only",
+      "decision": "local-only",
+      "issue": "WHO-124",
+      "rationale": "Intentional local-only workspace; missing-upstream is expected."
+    },
+    {
+      "target": "openclaw-google-workspace",
+      "category": "local-only",
+      "decision": "local-only until remote approved",
+      "issue": "WHO-124",
+      "rationale": "No remote until Edgar approves; treated as intentional local-only."
+    },
+    {
+      "target": ".openclaw\\extensions\\ai-agent-console",
+      "category": "mirror",
+      "decision": "mirror-only; canonical is Projects\\ai-agent-console",
+      "issue": "WHO-124",
+      "rationale": "Duplicate clone; the canonical working copy is Projects\\ai-agent-console."
+    },
+    {
+      "target": "duplicate clones",
+      "category": "mirror",
+      "decision": "canonical working copy is the only primary; mirror-tagged duplicates stay mirror-only",
+      "issue": "WHO-124",
+      "rationale": "Avoid re-judging duplicate working copies on every audit."
+    },
+    {
+      "target": "workspace severity thresholds",
+      "category": "workspace",
+      "decision": "keep warning=5, critical=25",
+      "issue": "WHO-124",
+      "rationale": "No further tuning until a fresh Windows report shows the threshold is still too noisy."
     }
   ]
 }

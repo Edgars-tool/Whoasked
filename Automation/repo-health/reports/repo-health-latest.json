@@ -27,6 +27,57 @@
     }
   ],
   "missingRoots": [],
+  "policyDecisions": [
+    {
+      "target": "Projects\\rebuild",
+      "category": "product",
+      "decision": "track upstream origin/codex/agent-git-pr-rule",
+      "issue": "WHO-124",
+      "rationale": "Active dev branch; upstream backfilled so the audit no longer flags missing-upstream."
+    },
+    {
+      "target": "workspace-lobster",
+      "category": "local-only",
+      "decision": "local-only; no remote tracking required",
+      "issue": "WHO-124",
+      "rationale": "Final decision: not promoted to a remote tracking branch until Edgar approves a remote."
+    },
+    {
+      "target": ".openclaw\\workspace\\main",
+      "category": "local-only",
+      "decision": "local-only",
+      "issue": "WHO-124",
+      "rationale": "Intentional local-only workspace; missing-upstream is expected."
+    },
+    {
+      "target": "openclaw-google-workspace",
+      "category": "local-only",
+      "decision": "local-only until remote approved",
+      "issue": "WHO-124",
+      "rationale": "No remote until Edgar approves; treated as intentional local-only."
+    },
+    {
+      "target": ".openclaw\\extensions\\ai-agent-console",
+      "category": "mirror",
+      "decision": "mirror-only; canonical is Projects\\ai-agent-console",
+      "issue": "WHO-124",
+      "rationale": "Duplicate clone; the canonical working copy is Projects\\ai-agent-console."
+    },
+    {
+      "target": "duplicate clones",
+      "category": "mirror",
+      "decision": "canonical working copy is the only primary; mirror-tagged duplicates stay mirror-only",
+      "issue": "WHO-124",
+      "rationale": "Avoid re-judging duplicate working copies on every audit."
+    },
+    {
+      "target": "workspace severity thresholds",
+      "category": "workspace",
+      "decision": "keep warning=5, critical=25",
+      "issue": "WHO-124",
+      "rationale": "No further tuning until a fresh Windows report shows the threshold is still too noisy."
+    }
+  ],
   "summary": {
     "total": 20,
     "critical": 1,
