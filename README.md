@@ -28,3 +28,4 @@ See [`docs/02-directory-structure.md`](docs/02-directory-structure.md) for the f
 | `01-connection-config.md` | VPS connection baseline (WHO-216)（文件尚未加入 repo）|
 | [`02-directory-structure.md`](docs/02-directory-structure.md) | Safe-zone dirs & permissions (WHO-217) |
 | [`who-97-cache-trace-rotation.md`](docs/who-97-cache-trace-rotation.md) | `cache-trace.jsonl` rotation / archive runbook (WHO-97) |
+| [`who-45-data-integrity-link-audit.md`](docs/who-45-data-integrity-link-audit.md) | Data integrity, duplicate, misplaced, and broken-link validation notes (WHO-45) |
