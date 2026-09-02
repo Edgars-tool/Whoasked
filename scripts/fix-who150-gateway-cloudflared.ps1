@@ -107,7 +107,7 @@ if ($RestartCloudflared) {
 
 # 3) External endpoint check
 if (-not $SkipExternalCheck) {
-    $external = Test-HttpJson -Url "https://mcp.whoasked.vip/mcp"
+    $external = Test-HttpJson -Url "https://mcp.edgars.tools/mcp"
     if ($external.Ok) {
         Write-Host "[OK] 外網 MCP endpoint 可達，HTTP $($external.StatusCode)" -ForegroundColor Green
     } else {

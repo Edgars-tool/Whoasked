@@ -4,7 +4,7 @@
 把以下三個健康檢查恢復到可用狀態：
 - `http://127.0.0.1:18789/health` 有回應（Gateway）
 - cloudflared 本機對應 port（預設 8765）有 LISTEN
-- 外網 `https://mcp.whoasked.vip/mcp` 可連線
+- 外網 `https://mcp.edgars.tools/mcp` 可連線
 
 ## 一次執行（建議）
 以 PowerShell 執行：
@@ -21,7 +21,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 3. 檢查 `cloudflared` process 是否存在。
 4. 檢查本機 port（預設 8765）是否 LISTEN。
 5. 若加上 `-RestartCloudflared`，嘗試重啟 Windows service（名稱含 `cloudflared`）。
-6. 檢查 `https://mcp.whoasked.vip/mcp` 是否可達。
+6. 檢查 `https://mcp.edgars.tools/mcp` 是否可達。
 
 ## 常用參數
 - `-StartGateway`：自動嘗試啟動 Gateway。
